@@ -1,11 +1,5 @@
 public static class TwiddleBIT {
-    public static int BITSIZE_UINT { get; private set; }
-    public static int BITSIZE_BYTE { get; private set; }
-    
-    static TwiddleBIT() {
-        BITSIZE_UINT = sizeof(uint) * 8;
-        BITSIZE_BYTE = sizeof(byte) * 8;
-    }
+    private static int BITSIZE_UINT = (sizeof(uint) * 8);
 
     public static uint ZeroBits( uint value, int length, int index ) {
         return value & ~((uint.MaxValue >> (BITSIZE_UINT - length)) << index);
