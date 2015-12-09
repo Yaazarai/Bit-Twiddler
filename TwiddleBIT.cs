@@ -25,7 +25,6 @@ public static class BitTwiddle {
 
     // Gets a total of "length" bits from the start "index."
     public static uint GetBits( uint value, int length, int index ) {
-        int shift = ( BITSIZE_UINT - length );
-        return ( value >> shift ) & ( uint.MaxValue >> shift );
+        return ( value >> ind ) & ( uint.MaxValue >> ( BITSIZE_UINT - length ) );
     }
 }
