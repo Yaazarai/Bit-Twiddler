@@ -1,29 +1,78 @@
 // Provides methods for twiddling multiple bits at once.
-public static class BitTwiddle {
-    private static int BITSIZE_UINT = sizeof(uint) * 8;
-    private static int BITSOF_BYTE = sizeof(byte) * 8;
+public static class TwiddleBIT {
+    // Number of bits in an unsigned integer.
+    public static int BITSOF_UINT { get; private set; }
+    
+    // Number of bits in an unsigned byte.
+    public static int BITSOF_BYTE { get; private set; }
 
+    static TwiddleBIT() {
+        BITSOF_UINT = sizeof(uint) * 8;
+        BITSOF_BYTE = sizeof(byte) * 8;
+    }
+
+    // Gives a value of x, align that value to a given alignment.
+    private static int Align( int iterator, int alignment ) {
+        return ( ( iterator + ( alignment - 1 ) ) & ~( alignment - 1 ) );
+    }
+    
     // Zeros a total of "length" bits from the start "index."
-    public static uint ZeroBits( uint value, int length, int index ) {
-        return value & ~( ( uint.MaxValue >> ( BITSIZE_UINT - length ) ) << index );
+    public static uint ZeroBits( uint val, int len, int ind ) {
+        return val & ~( ( uint.MaxValue >> ( BITSOF_UINT - len ) ) << ind );
+    }
+
+    // Given the starting bit "bitInd" and byte "byteInd" indices, set to 0 "length" bits across multiple bytes in the byte "stream."
+    public static void ZeroBits( byte[] stream, uint val, int len, int byteInd, int bitInd ) {
+        int bytes = Align( bitInd + len, BITSOF_BYTE ) / BITSOF_BYTE;
+        uint value = GetBits( stream, bytes * BITSOF_BYTE, byteInd, 0 );
+        value = ZeroBits( value, len, bitInd );
+            
+        byteInd = byteInd + Align( bitInd, 8 ) % 8;
+        for( int i = (bytes - 1); i > -1; i -- ) {
+            stream[ byteInd + i ] = (byte) ( value >> ( i * BITSOF_BYTE ) );
+        }
     }
 
     // Sets a total of "length" bits from the start "index," to 1.
-    public static uint SetBits( uint value, int length, int index ) {
-        return value | ( ( uint.MaxValue >> ( BITSIZE_UINT - length ) ) << index );
+    public static uint SetBits( uint val, int len, int ind ) {
+        return val | ( ( uint.MaxValue >> ( BITSOF_UINT - len ) ) << ind);
+    }
+
+    // Given the starting bit "bitInd" and byte "byteInd" indices, set to 1 "length" bits across multiple bytes in the byte "stream."
+    public static void SetBits( byte[] stream, uint val, int len, int byteInd, int bitInd ) {
+        int bytes = Align( bitInd + len, BITSOF_BYTE ) / BITSOF_BYTE;
+        uint value = GetBits( stream, bytes * BITSOF_BYTE, byteInd, 0 );
+        value = SetBits( value, len, bitInd );
+            
+        byteInd = byteInd + Align( bitInd, 8 ) % 8;
+        for( int i = (bytes - 1); i > -1; i -- ) {
+            stream[ byteInd + i ] = (byte) ( value >> ( i * BITSOF_BYTE ) );
+        }
     }
 
     // Toggles On/Off a total of "length" bits from the start "index."
-    public static uint FlipBits( uint value, int length, int index ) {
-        return value ^ ( ( uint.MaxValue >> ( BITSIZE_UINT - length ) ) << index );
+    public static uint FlipBits( uint val, int len, int ind ) {
+        return val ^ ( ( uint.MaxValue >> (BITSOF_UINT - len ) ) << ind);
     }
 
-    // Fills a total of "length" bits with the new set of "bits" from the start "index."
-    public static uint FillBits( uint value, uint bits, int length, int index ) {
-        value = ZeroBits( value, length, index );
-        return value | ( bits << index );
+    // Given the starting bit "bitInd" and byte "byteInd" indices, toggle/flip "length" bits across multiple bytes in the byte "stream."
+    public static void FlipBits( byte[] stream, uint val, int len, int byteInd, int bitInd ) {
+        int bytes = Align( bitInd + len, BITSOF_BYTE ) / BITSOF_BYTE;
+        uint value = GetBits( stream, bytes * BITSOF_BYTE, byteInd, 0 );
+        value = FlipBits( value, len, bitInd );
+            
+        byteInd = byteInd + Align( bitInd, 8 ) % 8;
+        for( int i = (bytes - 1); i > -1; i -- ) {
+            stream[ byteInd + i ] = (byte) ( value >> ( i * BITSOF_BYTE ) );
+        }
     }
-    
+
+    // Given the starting bit "bitInd" and byte "byteInd" indices, overwrite "length" bits across multiple bytes in the byte "stream."
+    public static uint FillBits( uint val, uint bits, int len, int ind ) {
+        val = ZeroBits( val, len, ind );
+        return val | ( bits << ind );
+    }
+
     // Given the starting bit "bitInd" and byte "byteInd" indices, overwrite "length" bits across multiple bytes in the byte "stream."
     public static void FillBits( byte[] stream, uint val, int len, int byteInd, int bitInd ) {
         int bytes = Align( bitInd + len, BITSOF_BYTE ) / BITSOF_BYTE;
@@ -37,10 +86,10 @@ public static class BitTwiddle {
     }
 
     // Gets a total of "length" bits from the start "index."
-    public static uint GetBits( uint value, int length, int index ) {
-        return ( value >> ind ) & ( uint.MaxValue >> ( BITSIZE_UINT - length ) );
+    public static uint GetBits( uint val, int len, int ind ) {
+        return ( val >> ind ) & ( uint.MaxValue >> ( BITSOF_UINT - len ) );
     }
-    
+
     // Given the starting bit "bitInd" and byte "byteInd" indices, get "length" bits from across multiple bytes in the byte "stream."
     public static uint GetBits( byte[] stream, int len, int byteInd, int bitInd ) {
         uint val = 0;
@@ -49,7 +98,7 @@ public static class BitTwiddle {
         for( int i = (bytes - 1); i > -1; i -- ) {
             val |= (uint)stream[ byteInd + i ] << ( i * BITSOF_BYTE );
         }
-        
+            
         val = val >> bitInd;
         val = val & ( uint.MaxValue >> ( BITSOF_UINT - len ) );
         return val;
