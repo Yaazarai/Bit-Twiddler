@@ -22,7 +22,7 @@ public static class TwiddleBIT {
     }
 
     // Given the starting bit "bitInd" and byte "byteInd" indices, set to 0 "length" bits across multiple bytes in the byte "stream."
-    public static void ZeroBits( byte[] stream, uint val, int len, int byteInd, int bitInd ) {
+    public static void ZeroBits( byte[] stream, int len, int byteInd, int bitInd ) {
         int bytes = Align( bitInd + len, BITSOF_BYTE ) / BITSOF_BYTE;
         uint value = GetBits( stream, bytes * BITSOF_BYTE, byteInd, 0 );
         value = ZeroBits( value, len, bitInd );
@@ -39,7 +39,7 @@ public static class TwiddleBIT {
     }
 
     // Given the starting bit "bitInd" and byte "byteInd" indices, set to 1 "length" bits across multiple bytes in the byte "stream."
-    public static void SetBits( byte[] stream, uint val, int len, int byteInd, int bitInd ) {
+    public static void SetBits( byte[] stream, int len, int byteInd, int bitInd ) {
         int bytes = Align( bitInd + len, BITSOF_BYTE ) / BITSOF_BYTE;
         uint value = GetBits( stream, bytes * BITSOF_BYTE, byteInd, 0 );
         value = SetBits( value, len, bitInd );
@@ -56,7 +56,7 @@ public static class TwiddleBIT {
     }
 
     // Given the starting bit "bitInd" and byte "byteInd" indices, toggle/flip "length" bits across multiple bytes in the byte "stream."
-    public static void FlipBits( byte[] stream, uint val, int len, int byteInd, int bitInd ) {
+    public static void FlipBits( byte[] stream, int len, int byteInd, int bitInd ) {
         int bytes = Align( bitInd + len, BITSOF_BYTE ) / BITSOF_BYTE;
         uint value = GetBits( stream, bytes * BITSOF_BYTE, byteInd, 0 );
         value = FlipBits( value, len, bitInd );
