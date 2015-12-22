@@ -2,6 +2,13 @@
 #ifndef TWIDDLEBIT_H
 #define TWIDDLEBIT_H
 
+    #define BITSOF_UINT 0x20
+    #define BITSOF_BYTE 0x08
+    #define MAXOF_UINT 0xFFFFFFFF
+
+    typedef unsigned char byte;
+    typedef unsigned int uint;
+    
     static class twiddlebit {
         private:
         static inline uint align ( uint itr, uint align ) {
