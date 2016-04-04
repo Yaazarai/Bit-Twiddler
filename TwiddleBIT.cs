@@ -12,7 +12,7 @@ public static class TwiddleBIT {
     }
 
     // Gives a value of x, align that value to a given alignment.
-    private static int Align( int iterator, int alignment ) {
+    public static int Align( int iterator, int alignment ) {
         return ( ( iterator + ( alignment - 1 ) ) & ~( alignment - 1 ) );
     }
     
