@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TWIDDLEBIT_H
-#define TWIDDLEBIT_H
+#ifndef BITTWIDDLER_H
+#define BITTWIDDLER_H
 
     #define BITSOF_UINT 0x20
     #define BITSOF_BYTE 0x08
@@ -9,7 +9,7 @@
     typedef unsigned char byte;
     typedef unsigned int uint;
     
-    static class twiddlebit {
+    static class bittwiddler {
         private:
         static inline uint align ( uint itr, uint align ) {
             uint cache = align - 0x1;
